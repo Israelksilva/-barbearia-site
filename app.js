@@ -9,13 +9,13 @@ function brand() {
   const s = catalog.settings;
   const legal = catalog.legal;
   const notice = $("#operation-notice");
-  notice.hidden = !!legal?.enabled;
-  notice.textContent = catalog.acceptingBookings
-    ? "Ambiente de teste: use dados fictícios até configurar e liberar a operação no painel."
-    : "A instalação ainda não está liberada para novos agendamentos. Fale com a barbearia.";
-  $("#legal-contact").textContent = legal?.enabled
-    ? [legal.operatorName, legal.businessId, legal.address, legal.privacyEmail].filter(Boolean).join(" · ")
-    : "Instalação em preparação, sem identificação comercial validada.";
+  notice.hidden = !!catalog.acceptingBookings;
+  notice.textContent = catalog.offline
+    ? "Site em configuração: os agendamentos abrem assim que a barbearia conectar o sistema."
+    : "Os agendamentos online estão pausados no momento. Fale com a barbearia pelo WhatsApp.";
+  $("#legal-contact").textContent = [legal?.operatorName, legal?.businessId, legal?.address, legal?.privacyEmail]
+    .filter(Boolean)
+    .join(" · ");
   document.querySelectorAll("[data-brand]").forEach((e) => (e.textContent = s.name));
   document.title = s.name + " · Agendamento";
   $("#description").textContent = s.description;
@@ -113,7 +113,7 @@ $("#services").onclick = (e) => {
   if (!button) return;
   const s = catalog.services.find((s) => s.id === button.dataset.service);
   if (!catalog.acceptingBookings) {
-    toast("A barbearia ainda não liberou a operação.");
+    toast("Os agendamentos online estão pausados. Fale com a barbearia.");
     return;
   }
   ensureLogin(() => openBooking(s));
